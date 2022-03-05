@@ -6,48 +6,6 @@ string ltrim(const string &);
 string rtrim(const string &);
 vector<string> split(const string &);
 
-int quadsum(vector<vector<int>> matrix) {
-    int m_size = matrix.size();
-    int result = 0;
-    for(int c = 0; c < m_size/2; c++){
-        for(int r = 0; r < m_size/2; r++){
-            result += matrix[r][c];
-        }
-    }
-    return result;
-}
-
-vector<vector<int>> flipRow(vector<vector<int>> matrix, int r){
-    int m_size = matrix.size();
-    int temp_size = m_size - 1;
-    int temp;
-    for(int i = 0; i < m_size/2; i++){
-        temp = matrix[r][i];
-        matrix[r][i] = matrix[r][temp_size];
-        matrix[r][temp_size] = temp;
-        temp_size--;
-
-    }
-    return matrix;
-}
-
-vector<vector<int>> flipColumn(vector<vector<int>> matrix, int c){
-    int m_size = matrix.size();
-    int temp_size = m_size - 1;
-    int temp;
-    for(int i = 0; i < m_size/2; i++){
-        temp = matrix[i][c];
-        matrix[i][c] = matrix[temp_size][c];
-        matrix[temp_size][c] = temp;
-        temp_size--;
-    }
-    return matrix;
-}
-
-
-
-
-
 /*
  * Complete the 'flippingMatrix' function below.
  *
@@ -56,58 +14,14 @@ vector<vector<int>> flipColumn(vector<vector<int>> matrix, int c){
  */
 
 int flippingMatrix(vector<vector<int>> matrix) {
-    int m_size = matrix.size();
-
-    // Columns
-    for(int c = 0; c < m_size; c++){
-        int quad_sum_before = quadsum(matrix);
-        int result_1 = 0, result_2 = 0;
-        for(int r = 0; r < m_size/2; r++){
-            result_1 += matrix[r][c];
-        }
-        for(int r = m_size - 1; r >= m_size/2; r--){
-            result_2 += matrix[r][c];
-        }
-        if(result_2 > result_1){
-            //flip columns
-            matrix = flipColumn(matrix, c);
-
-        }
-        int quad_sum_after = quadsum(matrix);
-        if(quad_sum_before > quad_sum_after){
-            matrix = flipColumn(matrix, c);
-        }
-    }
-
-     for(int r = 0; r < m_size; r++){
-        // Rows
-        int result_1 = 0, result_2 = 0;
-        int quad_sum_before = quadsum(matrix);
-        for(int c = 0; c < m_size/2; c++){
-            result_1 += matrix[r][c];
-        }
-        for(int c = m_size - 1; c >= m_size/2; c--){
-            result_2 += matrix[r][c];
-        }
-        if(result_2 > result_1){
-            // flip rows
-            matrix = flipRow(matrix, r);
-        }
-
-        int quad_sum_after = quadsum(matrix);
-        if(quad_sum_before > quad_sum_after){
-            matrix = flipRow(matrix, r);
-        }
-
-
-        for(int r = 0; r < m_size; r++){
-            for(int c = 0; c < m_size; c++){
-                    cout << matrix[r][c] << " ";
-            }
-            printf("\n");
-        }
-
-
+    int ans = 0, n = matrix.size() / 2;
+    for(int x = 0; x < n; x++)
+        for(int y = 0; y < n; y++)
+            ans += max( max(matrix[x][y], matrix[2 * n - 1 - x][y]),
+                        max(matrix[x][2 * n - 1 - y], matrix[2 * n - 1 - x][2 * n - 1 - y])
+                       );
+    cout << ans << endl;
+    return ans;
 }
 
 int main()
