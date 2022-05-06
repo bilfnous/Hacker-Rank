@@ -18,8 +18,61 @@ vector<string> split(const string &);
  *  5. INTEGER goalY
  */
 
+ // Graph: Breadth First Search (BFS)
 int minimumMoves(vector<string> grid, int startX, int startY, int goalX, int goalY) {
+    int r, c, rr, cc;
+    size_t grid_size = grid.size();
+    // Direction vectors
+    int dr[] = { -1, +1, 0, 0 };
+    int dc[] = { 0, 0, +1, -1 };
+    queue<int> rq, cq; // Empty row queue and column queue
+    // Variables to track number of steps taken
+    int move_count = 0;
+    int nodes_left_in_layer = 1;
+    int nodes_in_next_layer = 0;
+    bool end_reached = false;
+    vector<vector<bool>> visited(grid_size, vector<bool>(grid_size, false));
 
+    rq.push(startX);
+    cq.push(startY);
+    visited[startX][startY] = true;
+
+    while (!rq.empty()) {
+        r = rq.front();
+        c = cq.front();
+        rq.pop();
+        cq.pop();
+        if (r == goalX && c == goalY) {
+            end_reached = true;
+            return move_count;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            rr = r + dr[i];
+            cc = c + dc[i];
+
+            // Skip out of bounds index
+            if (rr < 0 || cc < 0) continue;
+            if (rr >= grid_size || cc >= grid_size) continue;
+
+            // Skip visited or blocked index
+            if (visited[rr][cc]) continue;
+            if (grid[rr][cc] == 'X') continue;
+
+            rq.push(rr);
+            cq.push(cc);
+            visited[rr][cc] = true;
+            nodes_in_next_layer++;
+        }
+
+        nodes_left_in_layer--;
+        if (nodes_in_next_layer == 0) {
+            nodes_in_next_layer = nodes_in_next_layer;
+            nodes_in_next_layer = 0;
+            move_count++;
+        }
+    }
+    return -1;
 }
 
 int main()
@@ -55,7 +108,7 @@ int main()
 
     int result = minimumMoves(grid, startX, startY, goalX, goalY);
 
-    fout << result << "\n";
+    cout << result << "\n";
 
     fout.close();
 
