@@ -20,7 +20,7 @@ vector<string> split(const string &);
 
  // Graph: Breadth First Search (BFS)
 int minimumMoves(vector<string> grid, int startX, int startY, int goalX, int goalY) {
-    int r, c, rr, cc;
+    int r, c, rr, cc, pr = startX, pc = startY;
     size_t grid_size = grid.size();
     // Direction vectors
     int dr[] = { -1, +1, 0, 0 };
@@ -30,7 +30,6 @@ int minimumMoves(vector<string> grid, int startX, int startY, int goalX, int goa
     int move_count = 0;
     int nodes_left_in_layer = 1;
     int nodes_in_next_layer = 0;
-    bool end_reached = false;
     vector<vector<bool>> visited(grid_size, vector<bool>(grid_size, false));
 
     rq.push(startX);
@@ -43,7 +42,6 @@ int minimumMoves(vector<string> grid, int startX, int startY, int goalX, int goa
         rq.pop();
         cq.pop();
         if (r == goalX && c == goalY) {
-            end_reached = true;
             return move_count;
         }
 
@@ -57,7 +55,7 @@ int minimumMoves(vector<string> grid, int startX, int startY, int goalX, int goa
 
             // Skip visited or blocked index
             if (visited[rr][cc]) continue;
-            if (grid[rr][cc] == 'X') continue;
+            if (grid[rr][cc] == 'x' || grid[rr][cc] == 'X') continue;
 
             rq.push(rr);
             cq.push(cc);
@@ -66,10 +64,16 @@ int minimumMoves(vector<string> grid, int startX, int startY, int goalX, int goa
         }
 
         nodes_left_in_layer--;
-        if (nodes_in_next_layer == 0) {
-            nodes_in_next_layer = nodes_in_next_layer;
+        if (nodes_left_in_layer == 0) {
+            nodes_left_in_layer = nodes_in_next_layer;
             nodes_in_next_layer = 0;
+            // Increment move_count only when direction is changed
+            // if(pr != rr && pc != cc){
+            //  pr = rr;
+            //  pc = cc;
+            // }
             move_count++;
+
         }
     }
     return -1;
