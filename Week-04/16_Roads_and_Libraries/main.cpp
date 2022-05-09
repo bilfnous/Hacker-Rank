@@ -6,19 +6,60 @@ string ltrim(const string &);
 string rtrim(const string &);
 vector<string> split(const string &);
 
+// DFS Search
+int dfs(vector<vector<int>> &v, int current_city, vector<bool> &visited){
+    int result = 1; // number of nodes connected to a specific city
+    visited[current_city] = true;
+    for(int i = 0; i < v[current_city].size(); i++){
+        if(!visited[v[current_city][i]])
+            result += dfs(v, v[current_city][i], visited);
+    }
+    return result;
+}
+
 /*
  * Complete the 'roadsAndLibraries' function below.
  *
  * The function is expected to return a LONG_INTEGER.
  * The function accepts following parameters:
- *  1. INTEGER n
- *  2. INTEGER c_lib
- *  3. INTEGER c_road
- *  4. 2D_INTEGER_ARRAY cities
+ *  1. INTEGER n, the number of cities
+ *  2. INTEGER c_lib, the cost to build a library
+ *  3. INTEGER c_road, the cost to repair a road
+ *  4. 2D_INTEGER_ARRAY cities each cities[i] contains two integers that represent cities that can be connected by a new road
  */
 
+/*
+  1. convert the 2D array into undirected graph
+  2. Decide whether A) to build a library in each city (n cities)
+                    B) or build one library in one city and connect the rest of the cities by roads (n-1 roads)
+*/
 long roadsAndLibraries(int n, int c_lib, int c_road, vector<vector<int>> cities) {
+    // Adjacency list, stores all nodes (cities) connected to a specific node (city)
+    vector<vector<int>> v(n + 1);
+    vector<bool> visited(n + 1, false);
+    // Number of cities connected to each city
+    vector<int> comps;
+    long result = 0;
 
+    // Adjacency list, undirected graph
+    for(int i = 0; i < cities.size(); i++){
+        v[cities[i][0]].push_back(cities[i][1]);
+        v[cities[i][1]].push_back(cities[i][0]);
+    }
+
+    for(int i = 1; i <= n; i++){
+        if(v[i].size() > 0 && !visited[i])
+            comps.push_back(dfs(v, i, visited));
+        // cities that are not connect to any other city
+        else if(v[i].size() == 0)
+            comps.push_back(1);
+    }
+
+    // Question Specific code
+    for(int i = 0; i < comps.size(); i++)
+        result += min((comps[i] - 1)* c_road + c_lib, comps[i] * c_lib);
+
+    return result;
 }
 
 int main()
@@ -36,9 +77,9 @@ int main()
 
         vector<string> first_multiple_input = split(rtrim(first_multiple_input_temp));
 
-        int n = stoi(first_multiple_input[0]);
+        int n = stoi(first_multiple_input[0]); // number ofcities
 
-        int m = stoi(first_multiple_input[1]);
+        int m = stoi(first_multiple_input[1]); // number roads
 
         int c_lib = stoi(first_multiple_input[2]);
 
@@ -63,7 +104,7 @@ int main()
 
         long result = roadsAndLibraries(n, c_lib, c_road, cities);
 
-        fout << result << "\n";
+        cout << result << "\n";
     }
 
     fout.close();
