@@ -1,10 +1,10 @@
-#include <bits/stdc++.h>
+#include "C:\msys64\mingw64\include\c++\11.2.0\x86_64-w64-mingw32\bits\stdc++.h"
 
 using namespace std;
 
-string ltrim(const string &);
-string rtrim(const string &);
-vector<string> split(const string &);
+string ltrim(const string&);
+string rtrim(const string&);
+vector<string> split(const string&);
 
 /*
  * Complete the 'bfs' function below.
@@ -17,39 +17,49 @@ vector<string> split(const string &);
  *  4. INTEGER s - the node to start traversals from
  */
 
+void addEdge(vector<vector<int>> adj, int u, int v) {
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+}
+
 vector<int> bfs(int n, int m, vector<vector<int>> edges, int s) {
-    vector<int> distances(n, -1);
+    vector<vector<int>> adj(n);  // adjacency list representation
+    vector<int> distances(m, 0);
     vector<bool> visited(n, false);
     queue<int> nodes;
     nodes.push(s);
     visited[s] = true;
-    distances[s] = 0;
 
-    while(!nodes.empty()){
+    for (int i = 0; i < m; i++)
+        addEdge(adj, edges[i][0], edges[i][1]);
+
+    // adj[n][0] ??
+
+    while (!nodes.empty()) {
         int node = nodes.front();
         nodes.pop();
-        for(auto it = edges[node].begin(); it != edges[node].end(); it++){
-            if(!visited[*it]){
-                distances[*it] = distances[node] + 1;
-                nodes.push(*it);
-                visited[*it] = true;
+        for (int i : adj[node]) {
+            if (!visited[i]) {
+                distances[i] = distances[node] + 6;
+                nodes.push(i);
+                visited[i] = true;
             }
         }
     }
 
-    for(int i = 0; i < n; i++){
-        if(visited[i] == false)
-            distances[i] = -1;
-        else if(distances[i] > 0)
-            distances[i] *= 6;
-    }
+    //for (int i = 0; i < n; i++) {
+    //    if (visited[i] == false)
+    //        distances[i] = -1;
+    //    else if (distances[i] > 0)
+    //        distances[i] *= 6;
+    //}
 
     return distances;
 }
 
 int main()
 {
-    ofstream fout(getenv("OUTPUT_PATH"));
+    //ofstream fout(getenv("OUTPUT_PATH"));
 
     string q_temp;
     getline(cin, q_temp);
@@ -101,12 +111,12 @@ int main()
         cout << "\n";
     }
 
-    fout.close();
+    //fout.close();
 
     return 0;
 }
 
-string ltrim(const string &str) {
+string ltrim(const string& str) {
     string s(str);
 
     s.erase(
@@ -117,7 +127,7 @@ string ltrim(const string &str) {
     return s;
 }
 
-string rtrim(const string &str) {
+string rtrim(const string& str) {
     string s(str);
 
     s.erase(
@@ -128,7 +138,7 @@ string rtrim(const string &str) {
     return s;
 }
 
-vector<string> split(const string &str) {
+vector<string> split(const string& str) {
     vector<string> tokens;
 
     string::size_type start = 0;
